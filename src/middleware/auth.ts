@@ -12,7 +12,7 @@ export interface AuthRequest extends Request {
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return sendError(res, 'No token', 401);
+    if (!token) return sendError(res, 'No token!', 401);
 
     const decoded = verifyToken(token);
     if (!decoded) return sendError(res, 'Invalid token', 401);
