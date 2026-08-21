@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { proposePrice, retryAgreement } from '../controllers/negotiation'
-import { protect } from '../middleware/auth'
+import { protect} from '../middleware/auth'
 
 const router = Router()
 
