@@ -29,8 +29,6 @@ app.get('/api', (_req, res) => {
     res.json({ message: 'API is running' })
 })
 
-app.get("/", (_req, res) => {
-    res.sendFile('index.html', { root: 'frontend' })
-});
+
 
 export default app;
