@@ -38,7 +38,7 @@ export const initializePayment = async (
 
 
         const reference =
-            `WALLET_${Date.now()}_${crypto
+            `TXR_${Date.now()}_${crypto
                 .randomBytes(4)
                 .toString('hex')}`
 
@@ -201,6 +201,7 @@ export const verifyPayment = async (
                 reference,
                 paystackAmount: data.amount,
                 currency: data.currency,
+                status:'completed'
             })
 
         return sendSuccess(

@@ -34,21 +34,39 @@ export const paystackWebhook = async (
 
         const event = req.body
 
-        if (event.event !== 'charge.success') {
-            return
+        if (event.event === 'charge.failed') {
+            const data = event.data
+
+            if (!data?.reference) {
+                return
+            }
+
+            await completeWalletPayment({
+                reference: data.reference,
+                paystackAmount: data.amount,
+                currency: data.currency,
+                status: "failed"
+            })
         }
 
-        const data = event.data
+        else if(event.event === 'charge.success') {
+            const data = event.data
 
-        if (!data?.reference) {
-            return
+            if (!data?.reference) {
+                return
+            }
+
+            await completeWalletPayment({
+                reference: data.reference,
+                paystackAmount: data.amount,
+                currency: data.currency,
+                status:"completed"
+            })
         }
 
-        await completeWalletPayment({
-            reference: data.reference,
-            paystackAmount: data.amount,
-            currency: data.currency,
-        })
+        else{
+            return
+        }
     } catch (error) {
         console.error(
             'Paystack webhook error:',

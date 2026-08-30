@@ -7,12 +7,14 @@ interface CompletePaymentParams {
     reference: string
     paystackAmount: number
     currency: string
+    status: string
 }
 
 export const completeWalletPayment = async ({
     reference,
     paystackAmount,
     currency,
+    status
 }: CompletePaymentParams) => {
     const session = await mongoose.startSession()
 
@@ -27,6 +29,21 @@ export const completeWalletPayment = async ({
             throw new Error('Payment record not found')
         }
 
+        if (status === "failed") {
+            payment.status = 'failed'
+            payment.paymentMethod = 'paystack'
+
+            await payment.save({ session })
+
+            await session.commitTransaction()
+
+            return {
+                alreadyCompleted: false,
+                payment,
+                status: "failed"
+            }
+
+        }
         if (payment.status === 'completed') {
             await session.commitTransaction()
 
@@ -87,7 +104,7 @@ export const completeWalletPayment = async ({
                     user: payment.user,
                     title: 'Wallet funded',
                     description: 'Wallet funded through Paystack',
-                    reference: `WALLET_CREDIT_${payment.reference}`,
+                    reference: `WALLET_${payment.reference}`,
                     amount: payment.amount,
                     type: 'credit',
                     status: 'completed',
